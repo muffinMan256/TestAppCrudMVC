@@ -6,6 +6,7 @@ using TestApp.Models;
 using Data.Core.Model;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TestApp.Helper;
+using X.PagedList;
 
 
 namespace TestApp.Controllers
@@ -21,12 +22,33 @@ namespace TestApp.Controllers
 
 
         //metoda asincrona 
-        public async Task<IActionResult> Index(int? pageSize)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, string currentFilter, int page = 1, int pageSize=10)
         {
 
             string nume = "Hello Andrei";
             ViewBag.NumePrenume = nume;
             ViewData["NumePrenume"] = nume;
+
+
+            //ordinea de sortare a functieti mele
+
+            if (string.IsNullOrWhiteSpace(sortOrder))
+            {
+                sortOrder = "sort1_desc";
+            }
+
+            ViewBag.Sort1Parm = sortOrder == "sort1_desc" ? "sort1_asc" : "sort1_desc";
+            ViewBag.Sort2Parm = sortOrder == "sort2_asc" ? "sort2_desc" : "sort2_asc";
+            ViewBag.Sort3Parm = sortOrder == "sort3_asc" ? "sort3_desc" : "sort3_asc";
+
+            ViewBag.CurrentSort = sortOrder;
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                page = 1;
+            }
+
+            ViewBag.CurrentFilter = searchString;
 
             //await asteapta dupa rezultat 
             var lst = await _personalRepository.FindAllAsync();
@@ -39,10 +61,17 @@ namespace TestApp.Controllers
                 UserId = a.UserId,
             });
 
+
+            ViewBag.CurrentPageSize = pageSize;
+            ViewBag.CurrentPageSize = page;
+
             var items = Utils.RecordListItems();
             ViewBag.PageSizeList = new SelectList(items, "Value", "Text", pageSize);
 
-            return View(model);
+
+            //pager 
+
+            return View(model.ToPagedList(page, pageSize));
         }
 
         [HttpGet]
@@ -160,6 +189,28 @@ namespace TestApp.Controllers
                 Valid = getmodel.Valid,
             };
             return View(model);
+        }
+
+
+        [HttpGet]
+        public async Task<RedirectToActionResult> GenerateData()
+        {
+
+            for (int i = 0; i < 100; i++)
+            {
+                var model = new Personal()
+                {
+                    UserId = Guid.NewGuid(),
+                    Valid = true,
+                    Nume = "TestNume" + i.ToString(),
+                    Prenume = "TestPrenume" + i.ToString(),
+                };
+
+              await  _personalRepository.AddAsync(model);
+
+            }
+            
+            return RedirectToAction("Index", "Home");
         }
     }
 }

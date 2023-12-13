@@ -1,66 +1,157 @@
-﻿@model IEnumerable<TestApp.Models.PersonalModel>
+﻿@model X.PagedList.IPagedList<TestApp.Models.PersonalModel>
+
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
 
 
 
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <div class="row">
     <div class="col-md-12 mb-3">
         <h1 class="display-4">Welcome</h1>
     </div>
-    <div class="col-md-12 mb-3">
+    <div class="col-md-4 mb-3">
+        <div class="row align-items-center g-3">
+            <div class="col-auto">
+                <label><b>Show:</b>&nbsp;</label>
+            </div>
+            <div class="col-auto">
+                <form asp-action="Index" asp-controller="Home" method="get">
+                    <select class="form-select" asp-items="ViewBag.PageSizeList" name="PageSizeList">
+                    </select>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 mb-3">
         <div class="float-end ">
             <a asp-action="Create" asp-controller="Home" class="btn btn-primary"><i class="fa fa-add"></i>&nbsp;Add Person</a>
         </div>
     </div>
-    
-    <!--Page size-->
-    <!--Push Test-->
-    <div class="col-md-2 my-2 mx-2">
-        <label for="pageSizeDropdown" class="form-label">Page Size:</label>
-        <select id="pageSizeDropdown" class="form-select" onchange="changePageSize(this.value)">
-
-        </select>
-    </div>
-
-
 </div>
 <div class="row">
     <div class="card">
         <div class="card-body">
-            @if(Model.Any())
-            {
-                foreach (var item in Model)
+            <div class="row">
+                @if (Model.PageCount > 0)
                 {
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input asp-for="@item.Valid" type="checkbox" class="form-check-input"/>
-                            </div>
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchstring = ViewBag.CurrentSearch, sortOrder = ViewBag.CurrentSort}),
+                                 new PagedListRenderOptions
+                    {
+                        LinkToFirstPageFormat = "<i class='fa fa-angle-double-left'></i>",
+                        LinkToPreviousPageFormat = "<i class='fa fa-angle-left'></i>",
+                        MaximumPageNumbersToDisplay = 3,
+                        LinkToNextPageFormat = "<i class='fa fa-angle-right'></i>",
+                        LinkToLastPageFormat = "<i class='fa fa-angle-double-right'></i>",
+                        ContainerDivClasses = new[] { "float-end mt-0" }
+                    })
+
+                    </div>
+
+                }
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive-md">
+                        @if (Model.PageCount > 0)
+                        {
+                            <table class="table table-bordered table-striped dataTable">
+                                <thead class="bg-white">
+                                    <tr>
+                                        <th class="@(ViewBag.CurrentSort == "sort1_asc" ? "sorting_asc" : ViewBag.CurrentSort == "sort1_desc" ? "sorting_desc" : "sorting")">
+                                            @Html.ActionLink("Valid", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort1Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize,  })
+                                        </th>
+                                        <th class="@(ViewBag.CurrentSort == "sort2_asc" ? "sorting_asc" : ViewBag.CurrentSort == "sort2_desc" ? "sorting_desc" : "sorting")">
+                                            @Html.ActionLink("FulName", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort2Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize, })
+                                        </th>
+                                        <th class="@(ViewBag.CurrentSort == "sort3_asc" ? "sorting_asc" : ViewBag.CurrentSort == "sort3_desc" ? "sorting_desc" : "sorting")">
+                                            @Html.ActionLink("Birthday", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort3Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize,  })
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td style = "width: 7%">
+                                                <div class="form-check">
+                                                    <input asp-for="@item.Valid" type="checkbox" class="form-check-input" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @item.FullName
+                                            </td>
+                                            <td style="width: 15%">
+                                                20.10.2023
+                                            </td>
+                                            <td style="width: 10%">
+                                                <div class="btn-group">
+                                                    <a asp-controller="Home" asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-success me-1" data-bs-toogle="tooltip" title=" Edit "><i class="fa fa-edit"></i></a>
+                                                    <a asp-controller="Home" asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger me-1" data-bs-toogle="tooltip" title=" Delete "><i class="fa fa-trash"></i></a>
+                                                    <a asp-controller="Home" asp-action="Details" asp-route-userId="@item.UserId" class="btn btn-info" data-bs-toogle="tooltip" title=" Details "><i class="fa fa-search"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        }
+                        else
+                        {
+                            <divp class="alert alert-danger">No data</divp>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @if (Model.PageCount > 0)
+                {
+                    <div class="col-md-6">
+                        <div class="float-start">
+                            Pagina <kbd class="bg-info text-white font-weight-bolder">@(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)</kbd> din <kbd class="bg-info text-white font-weight-bolder">@Model.PageCount </kbd>
                         </div>
-                        <div class="col-md-4">
-                            @item.FullName
-                        </div>
-                        <div class="col-md-4">
-                            <div class="float-end">
-                                <div class="btn-group">
-                                    <a asp-controller="Home" asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-success me-1"><i class="fa fa-edit"></i>&nbsp;Edit</a>
-                                    <a asp-controller="Home" asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger me-1"><i class="fa fa-trash"></i>&nbsp;Delete</a>
-                                    <a asp-controller="Home" asp-action="Details" asp-route-userId="@item.UserId" class="btn btn-info"><i class="fa fa-search"></i>&nbsp;Details</a>
-                                </div>
- 
-                            </div>
+                        <div class="float-end">
+                            Numar Inregistrari <kbd class="bg-info text-white font-weight-bolder">@Model.TotalItemCount</kbd>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchstring = ViewBag.CurrentSearch, sortOrder = ViewBag.CurrentSort}),
+                                 new PagedListRenderOptions
+                    {
+                        LinkToFirstPageFormat = "<i class='fa fa-angle-double-left'></i>",
+                        LinkToPreviousPageFormat = "<i class='fa fa-angle-left'></i>",
+                        MaximumPageNumbersToDisplay = 3,
+                        LinkToNextPageFormat = "<i class='fa fa-angle-right'></i>",
+                        LinkToLastPageFormat = "<i class='fa fa-angle-double-right'></i>",
+                        ContainerDivClasses = new[] { "float-end mt-0" }
+                    })
+                    </div>
+
                 }
-            }
-            else
-            {
-                <divp class="alert alert-danger">No data</divp>
-            }
+            </div>
         </div>
     </div>
 </div>
 
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                'placement': 'top'
+            });
+            $('[data-bs-toggle="popover"]').popover({
+                trigger: 'hover',
+                'placement': 'top'
+            });
+        });
+    </script>
+}
