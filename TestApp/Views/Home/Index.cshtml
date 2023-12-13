@@ -1,0 +1,65 @@
+﻿@model IEnumerable<TestApp.Models.PersonalModel>
+
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12 mb-3">
+        <h1 class="display-4">Welcome</h1>
+    </div>
+    <div class="col-md-12 mb-3">
+        <div class="float-end ">
+            <a asp-action="Create" asp-controller="Home" class="btn btn-primary"><i class="fa fa-add"></i>&nbsp;Add Person</a>
+        </div>
+    </div>
+    
+    <!--Page size-->
+    <div class="col-md-2 my-2 mx-2">
+        <label for="pageSizeDropdown" class="form-label">Page Size:</label>
+        <select id="pageSizeDropdown" class="form-select" onchange="changePageSize(this.value)">
+
+        </select>
+    </div>
+
+
+</div>
+<div class="row">
+    <div class="card">
+        <div class="card-body">
+            @if(Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input asp-for="@item.Valid" type="checkbox" class="form-check-input"/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @item.FullName
+                        </div>
+                        <div class="col-md-4">
+                            <div class="float-end">
+                                <div class="btn-group">
+                                    <a asp-controller="Home" asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-success me-1"><i class="fa fa-edit"></i>&nbsp;Edit</a>
+                                    <a asp-controller="Home" asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger me-1"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                    <a asp-controller="Home" asp-action="Details" asp-route-userId="@item.UserId" class="btn btn-info"><i class="fa fa-search"></i>&nbsp;Details</a>
+                                </div>
+ 
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <divp class="alert alert-danger">No data</divp>
+            }
+        </div>
+    </div>
+</div>
+

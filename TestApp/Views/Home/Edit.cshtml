@@ -1,0 +1,30 @@
+﻿@model TestApp.Models.PersonalModel
+
+
+<form method="post" asp-controller="Home" asp-action="Edit">
+    <input type="hidden" asp-for="UserId" />
+    <div class="row">
+        <div class="col-md-6">
+            <input asp-for="Nume" placeholder="Nume" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+            <input asp-for="Prenume" placeholder="Prenume" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+            <input asp-for="UserId" placeholder="Id of User" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+            <input asp-for="Valid" type="checkbox" class="form-check-input"/>
+            <div class="form-check">
+                <label class="form-check-label">
+
+                    Valid
+
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <input type="submit" value="Save" class="btn btn-primary"/>
+        </div>
+    </div>
+</form>
