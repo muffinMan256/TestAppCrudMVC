@@ -1,3 +1,3 @@
-First Razor based Project using C# and MVC
+First Razor based Project using.NET and MVC
 
 Basic DB Crud 
