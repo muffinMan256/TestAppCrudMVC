@@ -11,7 +11,7 @@ namespace Data.Core.IRepository
 {
     public interface IPersonalRepository
     {
-        Task<IEnumerable<Personal?>> FindAllAsync();
+        IQueryable<Personal> FindAllAsync();
 
         Task<Personal?> FindByIdAsync(long id);
 

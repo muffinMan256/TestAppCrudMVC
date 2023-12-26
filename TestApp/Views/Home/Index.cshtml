@@ -41,7 +41,7 @@
                     <div class="col-md-6">
                     </div>
                     <div class="col-md-6">
-                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchstring = ViewBag.CurrentSearch, sortOrder = ViewBag.CurrentSort}),
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = ViewBag.CurrentPageSize, sortOrder = ViewBag.CurrentSort, searchstring = ViewBag.CurrentSearch }),
                                  new PagedListRenderOptions
                     {
                         LinkToFirstPageFormat = "<i class='fa fa-angle-double-left'></i>",
@@ -68,7 +68,7 @@
                                             @Html.ActionLink("Valid", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort1Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize,  })
                                         </th>
                                         <th class="@(ViewBag.CurrentSort == "sort2_asc" ? "sorting_asc" : ViewBag.CurrentSort == "sort2_desc" ? "sorting_desc" : "sorting")">
-                                            @Html.ActionLink("FulName", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort2Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize, })
+                                            @Html.ActionLink("FullName", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort2Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize, })
                                         </th>
                                         <th class="@(ViewBag.CurrentSort == "sort3_asc" ? "sorting_asc" : ViewBag.CurrentSort == "sort3_desc" ? "sorting_desc" : "sorting")">
                                             @Html.ActionLink("Birthday", "Index", new { page = ViewBag.CurrentPage, sortOrder = ViewBag.Sort3Parm, currentFilter = ViewBag.CurrentFilter, pagesize = ViewBag.CurrentPageSize,  })
@@ -89,7 +89,10 @@
                                                 @item.FullName
                                             </td>
                                             <td style="width: 15%">
-                                                20.10.2023
+                                                @if (item.Birthday.HasValue)
+                                                {
+                                                    @item.Birthday.Value;
+                                                }
                                             </td>
                                             <td style="width: 10%">
                                                 <div class="btn-group">
@@ -124,7 +127,7 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchstring = ViewBag.CurrentSearch, sortOrder = ViewBag.CurrentSort}),
+                        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, pageSize = ViewBag.CurrentPageSize, sortOrder = ViewBag.CurrentSort, searchstring = ViewBag.CurrentSearch }),
                                  new PagedListRenderOptions
                     {
                         LinkToFirstPageFormat = "<i class='fa fa-angle-double-left'></i>",

@@ -15,6 +15,7 @@ namespace Data.Core.Model
         public byte[]? Image { get; set; }
         public int? Departament { get; set; }
         public Guid UserId { get; set; }
+        public string FullName => Nume + " " + Prenume;
     }
 
 

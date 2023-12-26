@@ -37,41 +37,67 @@ namespace TestApp.Controllers
                 sortOrder = "sort1_desc";
             }
 
-            ViewBag.Sort1Parm = sortOrder == "sort1_desc" ? "sort1_asc" : "sort1_desc";
-            ViewBag.Sort2Parm = sortOrder == "sort2_asc" ? "sort2_desc" : "sort2_asc";
-            ViewBag.Sort3Parm = sortOrder == "sort3_asc" ? "sort3_desc" : "sort3_asc";
-
-            ViewBag.CurrentSort = sortOrder;
+           
 
             if (!string.IsNullOrWhiteSpace(searchString))
             {
                 page = 1;
             }
 
-            ViewBag.CurrentFilter = searchString;
+        
 
             //await asteapta dupa rezultat 
-            var lst = await _personalRepository.FindAllAsync();
+            var lst =  _personalRepository.FindAllAsync();
+
+            switch (sortOrder)
+            {
+                case "sort1_asc": lst = lst.OrderBy(a => a.Valid);
+                    break;
+                case "sort1_desc": lst = lst.OrderByDescending(a => a.Valid);
+                    break;
+                case "sort2_asc":
+                    lst = lst.OrderBy(a => a.Nume).ThenBy(a=>a.Prenume);
+                    break;
+                case "sort2_desc":
+                    lst = lst.OrderByDescending(a => a.Nume).ThenByDescending(a => a.Prenume);
+                    break;
+                case "sort3_asc":
+                    lst = lst.OrderBy(a => a.Birthdate);
+                    break;
+                case "sort3_desc":
+                    lst = lst.OrderByDescending(a => a.Birthdate);
+                    break;
+                default:
+                    lst = lst.OrderBy(a => a.Valid);
+                    break;
+            }
 
             var model = lst.Select(a => new PersonalModel()
             {
-                Nume = a.Nume,
-                Prenume = a.Prenume,
+                FullName = a.FullName,
                 Valid = a.Valid,
                 UserId = a.UserId,
+                Birthday = a.Birthdate,
             });
 
-
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.CurrentPageSize = pageSize;
-            ViewBag.CurrentPageSize = page;
+            ViewBag.CurrentPage = page;
+            ViewBag.CurrentFilter = searchString;
+
+            ViewBag.Sort1Parm = sortOrder == "sort1_desc" ? "sort1_asc" : "sort1_desc";
+            ViewBag.Sort2Parm = sortOrder == "sort2_asc" ? "sort2_desc" : "sort2_asc";
+            ViewBag.Sort3Parm = sortOrder == "sort3_asc" ? "sort3_desc" : "sort3_asc";
+
+           
 
             var items = Utils.RecordListItems();
             ViewBag.PageSizeList = new SelectList(items, "Value", "Text", pageSize);
 
 
             //pager 
-
-            return View(model.ToPagedList(page, pageSize));
+            var lstmodel = model.ToPagedList(page, pageSize);
+            return View(lstmodel);
         }
 
         [HttpGet]

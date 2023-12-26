@@ -20,10 +20,10 @@ namespace Data.Core.Repository
             _db = db;
         }
 
-        public async Task<IEnumerable<Personal?>> FindAllAsync()
+       public IQueryable<Personal> FindAllAsync()
         {
 
-            return await _db.Personals.ToListAsync();
+            return  _db.Personals.Select(a=>a);
         }
 
         public async Task<Personal?> FindByIdAsync(long id)
